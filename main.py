@@ -92,7 +92,7 @@ if __name__ == '__main__':
                         help='Mode (train/test/train_and_evaluate)')
     args = parser.parse_args()
 
-    tf.logging._logger.setLevel(logging.INFO)
+    tf.logging.set_verbosity(tf.logging.INFO)
 
     # Print Config setting
     Config(args.config)
