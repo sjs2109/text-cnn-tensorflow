@@ -1,5 +1,46 @@
 node {
-  name: "global_step/Initializer/zeros"
+  name: "global_step/Initializer/zeros/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@global_step"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "global_step/Initializer/zeros/Const"
   op: "Const"
   attr {
     key: "_class"
@@ -33,6 +74,41 @@ node {
         }
         int64_val: 0
       }
+    }
+  }
+}
+node {
+  name: "global_step/Initializer/zeros"
+  op: "Fill"
+  input: "global_step/Initializer/zeros/shape_as_tensor"
+  input: "global_step/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_INT64
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@global_step"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -1676,55 +1752,10 @@ node {
   }
 }
 node {
-  name: "embeddings/embedding_lookup/axis"
-  op: "Const"
-  attr {
-    key: "_class"
-    value {
-      list {
-        s: "loc:@embeddings/embedding-rand"
-      }
-    }
-  }
-  attr {
-    key: "_output_shapes"
-    value {
-      list {
-        shape {
-        }
-      }
-    }
-  }
-  attr {
-    key: "dtype"
-    value {
-      type: DT_INT32
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_INT32
-        tensor_shape {
-        }
-        int_val: 0
-      }
-    }
-  }
-}
-node {
   name: "embeddings/embedding_lookup"
-  op: "GatherV2"
+  op: "Gather"
   input: "embeddings/embedding-rand/read"
   input: "train/IteratorGetNext"
-  input: "embeddings/embedding_lookup/axis"
-  attr {
-    key: "Taxis"
-    value {
-      type: DT_INT32
-    }
-  }
   attr {
     key: "Tindices"
     value {
@@ -1761,6 +1792,12 @@ node {
           }
         }
       }
+    }
+  }
+  attr {
+    key: "validate_indices"
+    value {
+      b: true
     }
   }
 }
@@ -2286,8 +2323,98 @@ node {
   }
 }
 node {
-  name: "convolutions/conv-maxpool-2-filter/conv2d/bias/Initializer/zeros"
+  name: "convolutions/conv-maxpool-2-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-2-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-2-filter/conv2d/bias/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-2-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-2-filter/conv2d/bias/Initializer/zeros"
+  op: "Fill"
+  input: "convolutions/conv-maxpool-2-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
+  input: "convolutions/conv-maxpool-2-filter/conv2d/bias/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -2309,23 +2436,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -3155,8 +3268,98 @@ node {
   }
 }
 node {
-  name: "convolutions/conv-maxpool-3-filter/conv2d/bias/Initializer/zeros"
+  name: "convolutions/conv-maxpool-3-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-3-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-3-filter/conv2d/bias/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-3-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-3-filter/conv2d/bias/Initializer/zeros"
+  op: "Fill"
+  input: "convolutions/conv-maxpool-3-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
+  input: "convolutions/conv-maxpool-3-filter/conv2d/bias/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -3178,23 +3381,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -4024,8 +4213,98 @@ node {
   }
 }
 node {
-  name: "convolutions/conv-maxpool-4-filter/conv2d/bias/Initializer/zeros"
+  name: "convolutions/conv-maxpool-4-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-4-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-4-filter/conv2d/bias/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-4-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-4-filter/conv2d/bias/Initializer/zeros"
+  op: "Fill"
+  input: "convolutions/conv-maxpool-4-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
+  input: "convolutions/conv-maxpool-4-filter/conv2d/bias/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -4047,23 +4326,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -4893,8 +5158,98 @@ node {
   }
 }
 node {
-  name: "convolutions/conv-maxpool-5-filter/conv2d/bias/Initializer/zeros"
+  name: "convolutions/conv-maxpool-5-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-5-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-5-filter/conv2d/bias/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-5-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "convolutions/conv-maxpool-5-filter/conv2d/bias/Initializer/zeros"
+  op: "Fill"
+  input: "convolutions/conv-maxpool-5-filter/conv2d/bias/Initializer/zeros/shape_as_tensor"
+  input: "convolutions/conv-maxpool-5-filter/conv2d/bias/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -4916,23 +5271,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -5893,8 +6234,98 @@ node {
   }
 }
 node {
-  name: "fully-connected/dense/bias/Initializer/zeros"
+  name: "fully-connected/dense/bias/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@fully-connected/dense/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 5
+      }
+    }
+  }
+}
+node {
+  name: "fully-connected/dense/bias/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@fully-connected/dense/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "fully-connected/dense/bias/Initializer/zeros"
+  op: "Fill"
+  input: "fully-connected/dense/bias/Initializer/zeros/shape_as_tensor"
+  input: "fully-connected/dense/bias/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -5916,23 +6347,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 5
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -7796,7 +8213,41 @@ node {
   }
 }
 node {
-  name: "loss/num_present/zeros_like"
+  name: "loss/num_present/zeros_like/shape_as_tensor"
+  op: "Const"
+  input: "^loss/assert_broadcastable/static_scalar_check_success"
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "loss/num_present/zeros_like/Const"
   op: "Const"
   input: "^loss/assert_broadcastable/static_scalar_check_success"
   attr {
@@ -7823,6 +8274,33 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "loss/num_present/zeros_like"
+  op: "Fill"
+  input: "loss/num_present/zeros_like/shape_as_tensor"
+  input: "loss/num_present/zeros_like/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -8565,7 +9043,41 @@ node {
   }
 }
 node {
-  name: "loss/zeros_like"
+  name: "loss/zeros_like/shape_as_tensor"
+  op: "Const"
+  input: "^loss/assert_broadcastable/static_scalar_check_success"
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "loss/zeros_like/Const"
   op: "Const"
   input: "^loss/assert_broadcastable/static_scalar_check_success"
   attr {
@@ -8592,6 +9104,33 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "loss/zeros_like"
+  op: "Fill"
+  input: "loss/zeros_like/shape_as_tensor"
+  input: "loss/zeros_like/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -8861,7 +9400,40 @@ node {
   }
 }
 node {
-  name: "train_op/gradients/loss/value_grad/zeros_like"
+  name: "train_op/gradients/loss/value_grad/zeros_like/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "train_op/gradients/loss/value_grad/zeros_like/Const"
   op: "Const"
   attr {
     key: "_output_shapes"
@@ -8887,6 +9459,33 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "train_op/gradients/loss/value_grad/zeros_like"
+  op: "Fill"
+  input: "train_op/gradients/loss/value_grad/zeros_like/shape_as_tensor"
+  input: "train_op/gradients/loss/value_grad/zeros_like/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -9504,7 +10103,40 @@ node {
   }
 }
 node {
-  name: "train_op/gradients/loss/Select_grad/zeros_like"
+  name: "train_op/gradients/loss/Select_grad/zeros_like/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "train_op/gradients/loss/Select_grad/zeros_like/Const"
   op: "Const"
   attr {
     key: "_output_shapes"
@@ -9530,6 +10162,33 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "train_op/gradients/loss/Select_grad/zeros_like"
+  op: "Fill"
+  input: "train_op/gradients/loss/Select_grad/zeros_like/shape_as_tensor"
+  input: "train_op/gradients/loss/Select_grad/zeros_like/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -11109,8 +11768,8 @@ node {
 node {
   name: "train_op/gradients/fully-connected/dense/BiasAdd_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/fully-connected/dense/BiasAdd_grad/BiasAddGrad"
   input: "^train_op/gradients/loss/xentropy/Reshape_grad/Reshape"
+  input: "^train_op/gradients/fully-connected/dense/BiasAdd_grad/BiasAddGrad"
 }
 node {
   name: "train_op/gradients/fully-connected/dense/BiasAdd_grad/tuple/control_dependency"
@@ -12344,8 +13003,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/BiasAdd_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/BiasAdd_grad/BiasAddGrad"
   input: "^train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/Relu_grad/ReluGrad"
+  input: "^train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/BiasAdd_grad/BiasAddGrad"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/BiasAdd_grad/tuple/control_dependency"
@@ -12452,8 +13111,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/BiasAdd_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/BiasAdd_grad/BiasAddGrad"
   input: "^train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/Relu_grad/ReluGrad"
+  input: "^train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/BiasAdd_grad/BiasAddGrad"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/BiasAdd_grad/tuple/control_dependency"
@@ -12560,8 +13219,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/BiasAdd_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/BiasAdd_grad/BiasAddGrad"
   input: "^train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/Relu_grad/ReluGrad"
+  input: "^train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/BiasAdd_grad/BiasAddGrad"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/BiasAdd_grad/tuple/control_dependency"
@@ -12668,8 +13327,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/BiasAdd_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/BiasAdd_grad/BiasAddGrad"
   input: "^train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/Relu_grad/ReluGrad"
+  input: "^train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/BiasAdd_grad/BiasAddGrad"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/BiasAdd_grad/tuple/control_dependency"
@@ -12972,8 +13631,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/Conv2D_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
   input: "^train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/Conv2D_grad/Conv2DBackpropInput"
+  input: "^train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-2-filter/conv2d/Conv2D_grad/tuple/control_dependency"
@@ -13285,8 +13944,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/Conv2D_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
   input: "^train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/Conv2D_grad/Conv2DBackpropInput"
+  input: "^train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-3-filter/conv2d/Conv2D_grad/tuple/control_dependency"
@@ -13598,8 +14257,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/Conv2D_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
   input: "^train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/Conv2D_grad/Conv2DBackpropInput"
+  input: "^train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-4-filter/conv2d/Conv2D_grad/tuple/control_dependency"
@@ -13911,8 +14570,8 @@ node {
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/Conv2D_grad/tuple/group_deps"
   op: "NoOp"
-  input: "^train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
   input: "^train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/Conv2D_grad/Conv2DBackpropInput"
+  input: "^train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/Conv2D_grad/Conv2DBackpropFilter"
 }
 node {
   name: "train_op/gradients/convolutions/conv-maxpool-5-filter/conv2d/Conv2D_grad/tuple/control_dependency"
@@ -16043,8 +16702,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-2-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-2-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -16066,23 +16815,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -16214,8 +16949,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-2-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-2-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -16237,23 +17062,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -16969,8 +17780,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-3-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-3-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -16992,23 +17893,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -17140,8 +18027,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-3-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-3-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -17163,23 +18140,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -17895,8 +18858,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-4-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-4-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -17918,23 +18971,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -18066,8 +19105,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-4-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-4-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -18089,23 +19218,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -18821,8 +19936,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-5-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-5-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -18844,23 +20049,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -18992,8 +20183,98 @@ node {
   }
 }
 node {
-  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-5-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 256
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@convolutions/conv-maxpool-5-filter/conv2d/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Initializer/zeros/shape_as_tensor"
+  input: "train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -19015,23 +20296,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 256
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -19687,8 +20954,98 @@ node {
   }
 }
 node {
-  name: "train_op/fully-connected/dense/bias/Adam/Initializer/zeros"
+  name: "train_op/fully-connected/dense/bias/Adam/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@fully-connected/dense/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 5
+      }
+    }
+  }
+}
+node {
+  name: "train_op/fully-connected/dense/bias/Adam/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@fully-connected/dense/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/fully-connected/dense/bias/Adam/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/fully-connected/dense/bias/Adam/Initializer/zeros/shape_as_tensor"
+  input: "train_op/fully-connected/dense/bias/Adam/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -19710,23 +21067,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 5
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -19858,8 +21201,98 @@ node {
   }
 }
 node {
-  name: "train_op/fully-connected/dense/bias/Adam_1/Initializer/zeros"
+  name: "train_op/fully-connected/dense/bias/Adam_1/Initializer/zeros/shape_as_tensor"
   op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@fully-connected/dense/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+            size: 1
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+            size: 1
+          }
+        }
+        int_val: 5
+      }
+    }
+  }
+}
+node {
+  name: "train_op/fully-connected/dense/bias/Adam_1/Initializer/zeros/Const"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@fully-connected/dense/bias"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_FLOAT
+        tensor_shape {
+        }
+        float_val: 0.0
+      }
+    }
+  }
+}
+node {
+  name: "train_op/fully-connected/dense/bias/Adam_1/Initializer/zeros"
+  op: "Fill"
+  input: "train_op/fully-connected/dense/bias/Adam_1/Initializer/zeros/shape_as_tensor"
+  input: "train_op/fully-connected/dense/bias/Adam_1/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
   attr {
     key: "_class"
     value {
@@ -19881,23 +21314,9 @@ node {
     }
   }
   attr {
-    key: "dtype"
+    key: "index_type"
     value {
-      type: DT_FLOAT
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_FLOAT
-        tensor_shape {
-          dim {
-            size: 5
-          }
-        }
-        float_val: 0.0
-      }
+      type: DT_INT32
     }
   }
 }
@@ -21924,17 +23343,17 @@ node {
   op: "Mul"
   input: "train_op/beta1_power/read"
   input: "train_op/train/beta1"
-  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/kernel/ApplyAdam"
   input: "^train_op/train/update_embeddings/embedding-rand/group_deps"
-  input: "^train_op/train/update_fully-connected/dense/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/bias/ApplyAdam"
   input: "^train_op/train/update_fully-connected/dense/kernel/ApplyAdam"
+  input: "^train_op/train/update_fully-connected/dense/bias/ApplyAdam"
   attr {
     key: "T"
     value {
@@ -22005,17 +23424,17 @@ node {
   op: "Mul"
   input: "train_op/beta2_power/read"
   input: "train_op/train/beta2"
-  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/kernel/ApplyAdam"
   input: "^train_op/train/update_embeddings/embedding-rand/group_deps"
-  input: "^train_op/train/update_fully-connected/dense/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/bias/ApplyAdam"
   input: "^train_op/train/update_fully-connected/dense/kernel/ApplyAdam"
+  input: "^train_op/train/update_fully-connected/dense/bias/ApplyAdam"
   attr {
     key: "T"
     value {
@@ -22084,19 +23503,19 @@ node {
 node {
   name: "train_op/train/update"
   op: "NoOp"
+  input: "^train_op/train/update_embeddings/embedding-rand/group_deps"
+  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/kernel/ApplyAdam"
+  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/bias/ApplyAdam"
+  input: "^train_op/train/update_fully-connected/dense/kernel/ApplyAdam"
+  input: "^train_op/train/update_fully-connected/dense/bias/ApplyAdam"
   input: "^train_op/train/Assign"
   input: "^train_op/train/Assign_1"
-  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-2-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-3-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-4-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/bias/ApplyAdam"
-  input: "^train_op/train/update_convolutions/conv-maxpool-5-filter/conv2d/kernel/ApplyAdam"
-  input: "^train_op/train/update_embeddings/embedding-rand/group_deps"
-  input: "^train_op/train/update_fully-connected/dense/bias/ApplyAdam"
-  input: "^train_op/train/update_fully-connected/dense/kernel/ApplyAdam"
 }
 node {
   name: "train_op/train/value"
@@ -22321,7 +23740,48 @@ node {
   }
 }
 node {
-  name: "accuracy/total/Initializer/zeros"
+  name: "accuracy/total/Initializer/zeros/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@accuracy/total"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "accuracy/total/Initializer/zeros/Const"
   op: "Const"
   attr {
     key: "_class"
@@ -22355,6 +23815,41 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "accuracy/total/Initializer/zeros"
+  op: "Fill"
+  input: "accuracy/total/Initializer/zeros/shape_as_tensor"
+  input: "accuracy/total/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@accuracy/total"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -22474,7 +23969,48 @@ node {
   }
 }
 node {
-  name: "accuracy/count/Initializer/zeros"
+  name: "accuracy/count/Initializer/zeros/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@accuracy/count"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "accuracy/count/Initializer/zeros/Const"
   op: "Const"
   attr {
     key: "_class"
@@ -22508,6 +24044,41 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "accuracy/count/Initializer/zeros"
+  op: "Fill"
+  input: "accuracy/count/Initializer/zeros/shape_as_tensor"
+  input: "accuracy/count/Initializer/zeros/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_class"
+    value {
+      list {
+        s: "loc:@accuracy/count"
+      }
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -22840,7 +24411,40 @@ node {
   }
 }
 node {
-  name: "accuracy/zeros_like"
+  name: "accuracy/zeros_like/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "accuracy/zeros_like/Const"
   op: "Const"
   attr {
     key: "_output_shapes"
@@ -22866,6 +24470,33 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "accuracy/zeros_like"
+  op: "Fill"
+  input: "accuracy/zeros_like/shape_as_tensor"
+  input: "accuracy/zeros_like/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -22934,7 +24565,40 @@ node {
   }
 }
 node {
-  name: "accuracy/zeros_like_1"
+  name: "accuracy/zeros_like_1/shape_as_tensor"
+  op: "Const"
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+  attr {
+    key: "dtype"
+    value {
+      type: DT_INT32
+    }
+  }
+  attr {
+    key: "value"
+    value {
+      tensor {
+        dtype: DT_INT32
+        tensor_shape {
+          dim {
+          }
+        }
+      }
+    }
+  }
+}
+node {
+  name: "accuracy/zeros_like_1/Const"
   op: "Const"
   attr {
     key: "_output_shapes"
@@ -22960,6 +24624,33 @@ node {
         }
         float_val: 0.0
       }
+    }
+  }
+}
+node {
+  name: "accuracy/zeros_like_1"
+  op: "Fill"
+  input: "accuracy/zeros_like_1/shape_as_tensor"
+  input: "accuracy/zeros_like_1/Const"
+  attr {
+    key: "T"
+    value {
+      type: DT_FLOAT
+    }
+  }
+  attr {
+    key: "_output_shapes"
+    value {
+      list {
+        shape {
+        }
+      }
+    }
+  }
+  attr {
+    key: "index_type"
+    value {
+      type: DT_INT32
     }
   }
 }
@@ -23060,43 +24751,43 @@ node {
 node {
   name: "init"
   op: "NoOp"
-  input: "^convolutions/conv-maxpool-2-filter/conv2d/bias/Assign"
-  input: "^convolutions/conv-maxpool-2-filter/conv2d/kernel/Assign"
-  input: "^convolutions/conv-maxpool-3-filter/conv2d/bias/Assign"
-  input: "^convolutions/conv-maxpool-3-filter/conv2d/kernel/Assign"
-  input: "^convolutions/conv-maxpool-4-filter/conv2d/bias/Assign"
-  input: "^convolutions/conv-maxpool-4-filter/conv2d/kernel/Assign"
-  input: "^convolutions/conv-maxpool-5-filter/conv2d/bias/Assign"
-  input: "^convolutions/conv-maxpool-5-filter/conv2d/kernel/Assign"
-  input: "^embeddings/embedding-rand/Assign"
-  input: "^fully-connected/dense/bias/Assign"
-  input: "^fully-connected/dense/kernel/Assign"
   input: "^global_step/Assign"
+  input: "^embeddings/embedding-rand/Assign"
+  input: "^convolutions/conv-maxpool-2-filter/conv2d/kernel/Assign"
+  input: "^convolutions/conv-maxpool-2-filter/conv2d/bias/Assign"
+  input: "^convolutions/conv-maxpool-3-filter/conv2d/kernel/Assign"
+  input: "^convolutions/conv-maxpool-3-filter/conv2d/bias/Assign"
+  input: "^convolutions/conv-maxpool-4-filter/conv2d/kernel/Assign"
+  input: "^convolutions/conv-maxpool-4-filter/conv2d/bias/Assign"
+  input: "^convolutions/conv-maxpool-5-filter/conv2d/kernel/Assign"
+  input: "^convolutions/conv-maxpool-5-filter/conv2d/bias/Assign"
+  input: "^fully-connected/dense/kernel/Assign"
+  input: "^fully-connected/dense/bias/Assign"
+  input: "^train_op/learning_rate/Assign"
   input: "^train_op/beta1_power/Assign"
   input: "^train_op/beta2_power/Assign"
-  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/kernel/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/kernel/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/kernel/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/kernel/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/kernel/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/kernel/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Assign"
-  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/kernel/Adam/Assign"
-  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/kernel/Adam_1/Assign"
   input: "^train_op/embeddings/embedding-rand/Adam/Assign"
   input: "^train_op/embeddings/embedding-rand/Adam_1/Assign"
-  input: "^train_op/fully-connected/dense/bias/Adam/Assign"
-  input: "^train_op/fully-connected/dense/bias/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/kernel/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/kernel/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-2-filter/conv2d/bias/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/kernel/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/kernel/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-3-filter/conv2d/bias/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/kernel/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/kernel/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-4-filter/conv2d/bias/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/kernel/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/kernel/Adam_1/Assign"
+  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam/Assign"
+  input: "^train_op/convolutions/conv-maxpool-5-filter/conv2d/bias/Adam_1/Assign"
   input: "^train_op/fully-connected/dense/kernel/Adam/Assign"
   input: "^train_op/fully-connected/dense/kernel/Adam_1/Assign"
-  input: "^train_op/learning_rate/Assign"
+  input: "^train_op/fully-connected/dense/bias/Adam/Assign"
+  input: "^train_op/fully-connected/dense/bias/Adam_1/Assign"
 }
 node {
   name: "init_1"
@@ -25334,49 +27025,11 @@ node {
   }
 }
 node {
-  name: "report_uninitialized_variables/boolean_mask/GatherV2/axis"
-  op: "Const"
-  device: "/device:CPU:0"
-  attr {
-    key: "_output_shapes"
-    value {
-      list {
-        shape {
-        }
-      }
-    }
-  }
-  attr {
-    key: "dtype"
-    value {
-      type: DT_INT32
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_INT32
-        tensor_shape {
-        }
-        int_val: 0
-      }
-    }
-  }
-}
-node {
-  name: "report_uninitialized_variables/boolean_mask/GatherV2"
-  op: "GatherV2"
+  name: "report_uninitialized_variables/boolean_mask/Gather"
+  op: "Gather"
   input: "report_uninitialized_variables/boolean_mask/Reshape"
   input: "report_uninitialized_variables/boolean_mask/Squeeze"
-  input: "report_uninitialized_variables/boolean_mask/GatherV2/axis"
   device: "/device:CPU:0"
-  attr {
-    key: "Taxis"
-    value {
-      type: DT_INT32
-    }
-  }
   attr {
     key: "Tindices"
     value {
@@ -25399,6 +27052,12 @@ node {
           }
         }
       }
+    }
+  }
+  attr {
+    key: "validate_indices"
+    value {
+      b: true
     }
   }
 }
@@ -25469,7 +27128,7 @@ node {
 node {
   name: "concat"
   op: "ConcatV2"
-  input: "report_uninitialized_variables/boolean_mask/GatherV2"
+  input: "report_uninitialized_variables/boolean_mask/Gather"
   input: "report_uninitialized_resources/Const"
   input: "concat/axis"
   attr {
@@ -27669,49 +29328,11 @@ node {
   }
 }
 node {
-  name: "report_uninitialized_variables_1/boolean_mask/GatherV2/axis"
-  op: "Const"
-  device: "/device:CPU:0"
-  attr {
-    key: "_output_shapes"
-    value {
-      list {
-        shape {
-        }
-      }
-    }
-  }
-  attr {
-    key: "dtype"
-    value {
-      type: DT_INT32
-    }
-  }
-  attr {
-    key: "value"
-    value {
-      tensor {
-        dtype: DT_INT32
-        tensor_shape {
-        }
-        int_val: 0
-      }
-    }
-  }
-}
-node {
-  name: "report_uninitialized_variables_1/boolean_mask/GatherV2"
-  op: "GatherV2"
+  name: "report_uninitialized_variables_1/boolean_mask/Gather"
+  op: "Gather"
   input: "report_uninitialized_variables_1/boolean_mask/Reshape"
   input: "report_uninitialized_variables_1/boolean_mask/Squeeze"
-  input: "report_uninitialized_variables_1/boolean_mask/GatherV2/axis"
   device: "/device:CPU:0"
-  attr {
-    key: "Taxis"
-    value {
-      type: DT_INT32
-    }
-  }
   attr {
     key: "Tindices"
     value {
@@ -27736,12 +29357,18 @@ node {
       }
     }
   }
+  attr {
+    key: "validate_indices"
+    value {
+      b: true
+    }
+  }
 }
 node {
   name: "init_2"
   op: "NoOp"
-  input: "^accuracy/count/Assign"
   input: "^accuracy/total/Assign"
+  input: "^accuracy/count/Assign"
 }
 node {
   name: "init_all_tables"
@@ -27755,8 +29382,8 @@ node {
   name: "group_deps_1"
   op: "NoOp"
   input: "^init_2"
-  input: "^init_3"
   input: "^init_all_tables"
+  input: "^init_3"
 }
 node {
   name: "Merge/MergeSummary"
@@ -27834,7 +29461,7 @@ node {
         dtype: DT_STRING
         tensor_shape {
         }
-        string_val: "_temp_89613cb95b7142df88b139d132a2df81/part"
+        string_val: "_temp_fbfb5d0770304afeb0cdabb1ee3f6e8c/part"
       }
     }
   }
@@ -28263,8 +29890,8 @@ node {
   name: "save/Identity"
   op: "Identity"
   input: "save/Const"
-  input: "^save/MergeV2Checkpoints"
   input: "^save/control_dependency"
+  input: "^save/MergeV2Checkpoints"
   device: "/device:CPU:0"
   attr {
     key: "T"
@@ -30345,6 +31972,14 @@ node {
   op: "NoOp"
   input: "^save/Assign"
   input: "^save/Assign_1"
+  input: "^save/Assign_2"
+  input: "^save/Assign_3"
+  input: "^save/Assign_4"
+  input: "^save/Assign_5"
+  input: "^save/Assign_6"
+  input: "^save/Assign_7"
+  input: "^save/Assign_8"
+  input: "^save/Assign_9"
   input: "^save/Assign_10"
   input: "^save/Assign_11"
   input: "^save/Assign_12"
@@ -30355,7 +31990,6 @@ node {
   input: "^save/Assign_17"
   input: "^save/Assign_18"
   input: "^save/Assign_19"
-  input: "^save/Assign_2"
   input: "^save/Assign_20"
   input: "^save/Assign_21"
   input: "^save/Assign_22"
@@ -30366,7 +32000,6 @@ node {
   input: "^save/Assign_27"
   input: "^save/Assign_28"
   input: "^save/Assign_29"
-  input: "^save/Assign_3"
   input: "^save/Assign_30"
   input: "^save/Assign_31"
   input: "^save/Assign_32"
@@ -30374,12 +32007,6 @@ node {
   input: "^save/Assign_34"
   input: "^save/Assign_35"
   input: "^save/Assign_36"
-  input: "^save/Assign_4"
-  input: "^save/Assign_5"
-  input: "^save/Assign_6"
-  input: "^save/Assign_7"
-  input: "^save/Assign_8"
-  input: "^save/Assign_9"
 }
 node {
   name: "save/restore_all"
